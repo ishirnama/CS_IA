@@ -1,0 +1,7 @@
+Pillow==10.4.0
+emoji==2.12.1
+mysql-connector-python==9.0.0
+opencv-python==4.10.0.84
+tkcalendar==1.6.1
+pyttsx3==2.91
+opencv-contrib-python==4.10.0.84
