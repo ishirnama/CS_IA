@@ -83,6 +83,8 @@ def insert_user(username, password, email, forename, surname, age=None, is_admin
         fingerprint, dob, pixelsum, join_date, contour_count,org_id,hide_metadata,hide_userinformation, time_of_failed_login, failed_login_attempts, color_theme) )
 	conn.commit()
 	conn.close()
+	insert_user_record(username, "consultation","15/12/2024",username)
+	insert_user_record(username, "consultation","26/04/202",username)
 
 def update_user(user_record):
 	if (len(list_tables())==0):
