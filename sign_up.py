@@ -11,6 +11,7 @@ from tkinter import messagebox
 import database
 import io
 import scanner
+import re
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"GUI/Signup")
@@ -31,8 +32,26 @@ def back_to_login():
     import main
     main.load_ui()
 
+def password_checker(password):
+    flag = 0
+    if (len(password)<=6):
+        flag = -1
+        print("length")
+    elif not re.search("[a-z]", password):
+        flag = -1
+        print("small")
+    elif not re.search("[A-Z]", password):
+        flag = -1
+        print("cap")
+    elif not re.search("[0-9]", password):
+        flag = -1
+        print("num")
+    else:
+        flag = 0
+    
+    return flag
 def submit_clicked():
-    if forename.get() != "" and surname.get() != "" and dob.get != "" and email.get() != "" and username.get() != "" and password.get() != "" and image_data != None:
+    if forename.get() != "" and surname.get() != "" and dob.get != "" and email.get() != "" and username.get() != "" and password.get() != "" and image_data != None and password_checker(password.get())==0:
         
         print("user")
         img1 = Image.open(io.BytesIO(image_data))
@@ -44,6 +63,8 @@ def submit_clicked():
             back_to_login()
         else:
             messagebox.showinfo("Error", "Invalid user. Either fingerprint or user already exists")
+    elif password.get() != "" and password_checker(password.get())!=0:
+        messagebox.showinfo("Error", "Password should be atleast length of 6 with one small, one capital and one number charecter")
     else:
         print("datetime.now(): "+datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         messagebox.showinfo("Error", "All fields are mandatory")

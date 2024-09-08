@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import font
 import time
+from datetime import datetime
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from PIL import Image, ImageFilter
 import database
@@ -51,18 +52,42 @@ def login():
         clear_fields(username, password)
         root.destroy()
         import menu
-        user_record = database.find_user(ret_username,ret_password)
+        user_record = database.find_user_by_username(ret_username)
         menu.load_ui(user_record)
     else:
-        user_record = database.find_user(ret_username,ret_password)
+        # print(round(time.time() * 1000))
+        user_record = database.find_user_by_username(ret_username)
         if user_record is None:
             messagebox.showinfo("Error", "User not valid")
             clear_fields(username, password)
-        else:
+        elif user_record is not None and user_record[1] != ret_password and user_record[16]<2:
+            messagebox.showinfo("Error", "User not valid")
+            clear_fields(username, password)
+            user_record =  list(user_record)
+            user_record[16]=user_record[16]+1
+            database.update_user(user_record)
+        elif user_record is not None and user_record[1] != ret_password and user_record[16]==2 and user_record[15]==0:
+            messagebox.showinfo("Error", "User not valid")
+            clear_fields(username, password)
+            user_record =  list(user_record)
+            user_record[15]=round(time.time() * 1000)
+            database.update_user(user_record)
+        elif user_record is not None and user_record[16]==2 and ((round(time.time() * 1000)-user_record[15])/1000)/60<15:
+            messagebox.showinfo("Error", f"User Locked. Please retry after for {int(15-((round(time.time() * 1000)-user_record[15])/1000)/60)} minutes")
+            clear_fields(username, password)
+        elif user_record is not None and user_record[1] == ret_password:
             clear_fields(username, password)
             root.destroy()
+            user_record =  list(user_record)
+            user_record[15]=0
+            user_record[16]=0
+            database.update_user(user_record)
             import menu
             menu.load_ui(user_record)
+        else:
+            print(((round(time.time() * 1000)-user_record[15])/1000)/60)
+            messagebox.showinfo("Error", "User not valid. Unknown Error")
+            clear_fields(username, password)
         
 def validate_login_biometric(image_data):
     img1 = Image.open(io.BytesIO(image_data))
@@ -74,7 +99,7 @@ def validate_login_biometric(image_data):
     else:
         messagebox.showinfo("Error", "User not valid")
         load_ui()
-        clear_fields(username, password)        
+        # clear_fields(username, password)        
 
 def load_ui():
     global username, password, root
@@ -233,7 +258,7 @@ def load_ui():
     )
 
     submit = Button(root, command=login, text="Submit", font=(
-                "Courier", 16), bd=3, relief=RIDGE, bg="red", fg="#080808")
+                "Courier", 16), bd=3, relief=RIDGE, fg="#080808", anchor="nw")
     root.bind('<Escape>', lambda e: clear_fields(username, password))
     submit.place(
         x=113.0,
@@ -242,7 +267,7 @@ def load_ui():
         height=25.889514923095703
     )
     bl = Button(root, command=biometric_login, text="Biometric Login", font=(
-                "Courier", 16), bd=3, relief=RIDGE, bg="red", fg="#080808")
+                "Courier", 16), bd=3, relief=RIDGE, fg="#080808", anchor="nw")
     bl.place(
         x=113.0,
         y=347.0,
@@ -251,7 +276,7 @@ def load_ui():
     )
 
     snp = Button(root, command=signup, text="Signup", font=(
-                "Courier", 16), bd=3, relief=RIDGE, bg="red", fg="#080808")
+                "Courier", 16), bd=3, relief=RIDGE, fg="#080808", anchor="nw")
     snp.place(
         x=113.0,
         y=387.0,

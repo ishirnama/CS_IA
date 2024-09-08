@@ -9,7 +9,6 @@ import database
 import io
 
 def matcher(img1, img2):
-    print("Starting test")
     pil_image1 = img1.convert('RGB')
     open_cv_image1 = np.array(pil_image1)
     open_cv_image1 = open_cv_image1[:, :, ::-1].copy()
@@ -45,7 +44,6 @@ def matcher(img1, img2):
         cv2.destroyAllWindows()
 
 def match_in_db(img1):
-    print("Starting test")
     pil_image1 = img1.convert('RGB')
     open_cv_image1 = np.array(pil_image1)
     open_cv_image1 = open_cv_image1[:, :, ::-1].copy()
