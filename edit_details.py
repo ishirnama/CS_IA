@@ -27,10 +27,10 @@ image_item = None
 canvas = None
 image_data = None
 
-def back_to_login():
+def back_to_menu(user_data):
     root.destroy()
-    import main
-    main.load_ui()
+    import menu
+    menu.load_ui(user_data)
 
 def password_checker(password):
     flag = 0
@@ -47,21 +47,25 @@ def password_checker(password):
         flag = 0
     
     return flag
-def submit_clicked():
-    if forename.get() != "" and surname.get() != "" and dob.get != "" and email.get() != "" and username.get() != "" and password.get() != "" and image_data != None and password_checker(password.get())==0:
+def submit_clicked(user_data):
+    if forename.get() != "" and surname.get() != "" and dob.get != "" and email.get() != "" and username.get() != "" and password.get() != "" and password_checker(password.get())==0:
+        user_data =  list(user_data)
+        user_data[3]=forename.get()
+        user_data[4]=surname.get()
+        user_data[8]=dob.get()
+        user_data[2]=email.get()
+        user_data[1]=password.get()
+        user_data[5]=calc_age(dob.get())
+
+        database.update_user(user_data)
+        # database.update_user( username.get(), password.get(), email.get(), forename.get(), surname.get(),age= calc_age(dob.get()), fingerprint=image_data,
+        #     dob=dob.get(), pixelsum=scanner.get_pixel_sum(image_data), join_date=datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+        messagebox.showinfo("Success", f"User {username.get()} details changed.")
+        back_to_menu(user_data)
+        # print(user_data)
         
-        print("user")
-        img1 = Image.open(io.BytesIO(image_data))
-        img1 = img1.resize((200, 200), Image.Resampling.LANCZOS)
-        if database.find_user_by_username(username.get()) == None and scanner.match_in_db(img1) == None:
-            database.insert_user( username.get(), password.get(), email.get(), forename.get(), surname.get(),age= calc_age(dob.get()), fingerprint=image_data,
-            dob=dob.get(), pixelsum=scanner.get_pixel_sum(image_data), join_date=datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
-            messagebox.showinfo("Success", f"User {username.get()} signedup. Please login with username/password or fingerprint")
-            back_to_login()
-        else:
-            messagebox.showinfo("Error", "Invalid user. Either fingerprint or user already exists")
     elif password.get() != "" and password_checker(password.get())!=0:
-        messagebox.showinfo("Error", "Password should be atleast length of 6 with one small, one capital and one number charecter")
+        messagebox.showinfo("Error", "Password should be atleast length of 9 with one small and one number charecter")
     else:
         print("datetime.now(): "+datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         messagebox.showinfo("Error", "All fields are mandatory")
@@ -112,14 +116,14 @@ def generate():
     rng_pwd.insert(0, fpwd)
 
 
-def load_ui():
+def load_ui(user_data):
     global root, forename, surname, dob, email, username, password, rng_pwd, canvas
     root = Tk()
     root.title("Bio-Metric Barrier System")
     button_hit_count = 0
     root.geometry("601x501")
     root.configure(bg = "#FFFFFF")
-    root.bind('<Escape>', lambda e : back_to_login())
+    root.bind('<Escape>', lambda e : back_to_menu(user_data))
 
 
     canvas = Canvas(
@@ -138,7 +142,7 @@ def load_ui():
         image=submit_img,
         borderwidth=0,
         highlightthickness=0,
-        command=submit_clicked,
+        command=lambda: submit_clicked(user_data),
         relief="raised",
         bd=3,
     )
@@ -178,9 +182,9 @@ def load_ui():
         35.0,
         15.0,
         anchor="nw",
-        text="Sign Up",
+        text="Edit Detals",
         fill="#000000",
-        font=("Inter Bold", 16 * -1)
+        font=("Inter Bold", 14 * -1)
     )
 
     exit_img = PhotoImage(
@@ -189,7 +193,7 @@ def load_ui():
         image=exit_img,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: back_to_login(),
+        command=lambda: back_to_menu(user_data),
         relief="raised"
     )
     exit.place(
@@ -235,6 +239,7 @@ def load_ui():
         width=277.0,
         height=40.0
     )
+    forename.insert(0,user_data[3])
 
     entry_image_6 = PhotoImage(
         file=relative_to_assets("entry_6.png"))
@@ -249,13 +254,14 @@ def load_ui():
         fg="#000716",
         highlightthickness=0
     )
-    username.config(font=("Courier", 14))
     username.place(
         x=335.0,
         y=82.0,
         width=240.0,
         height=40.0
     )
+    username.insert(0,user_data[0])
+    username.config(font=("Courier", 14), state="disabled")
 
     entry_image_7 = PhotoImage(
         file=relative_to_assets("entry_7.png"))
@@ -277,7 +283,6 @@ def load_ui():
         width=240.0,
         height=40.0
     )
-
     canvas.create_text(
         32.0,
         51.0,
@@ -300,6 +305,7 @@ def load_ui():
         fg="#000716",
         highlightthickness=0
     )
+
     email.config(font=("Courier", 14))
     email.place(
         x=32.0,
@@ -307,6 +313,7 @@ def load_ui():
         width=277.0,
         height=40.0
     )
+    email.insert(0,user_data[2])
 
     canvas.create_text(
         32.0,
@@ -337,7 +344,7 @@ def load_ui():
         width=277.0,
         height=40.0
     )
-
+    surname.insert(0,user_data[4])
     canvas.create_text(
         32.0,
         131.0,
@@ -353,7 +360,7 @@ def load_ui():
         highlightthickness=0
     )
     dob.config(font=("Courier", 14), fg='grey')
-    dob.insert(0, "D D / M M / Y Y Y Y")
+    # dob.insert(0, "D D / M M / Y Y Y Y")
     dob.bind("<FocusIn>", clear_placeholder)
     dob.bind("<FocusOut>", restore_placeholder)
     dob.bind("<Key>", on_type)
@@ -363,6 +370,7 @@ def load_ui():
         width=277.0,
         height=40.0
     )
+    dob.insert(0,user_data[8])
 
     canvas.create_text(
         32.0,
@@ -437,7 +445,7 @@ def load_ui():
         width=240.0,
         height=40.0
     )
-
+    password.insert(0,user_data[1])
     canvas.create_text(
         339.0,
         147.0,
@@ -460,12 +468,12 @@ def load_ui():
         360,
         250,
         anchor="nw",
-        text="Click here to \nScan or Load \nFingerprint",
+        text="fingerprint \nCannot be \nChanged from here",
         fill="#FFFFFF",
         font=("Inter", 14 * -1)
     )
 
-    canvas.tag_bind(drag_box, "<Button-1>", load_image)
+    # canvas.tag_bind(drag_box, "<Button-1>", load_image)
 
     root.resizable(False, False)
     window_height = 501
@@ -507,4 +515,11 @@ def load_image(event=None):
         canvas.image = tk_image
 
 if __name__ == "__main__":
-    load_ui()
+    file_path1 = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Finger Print", filetypes=[("BMP Files", "*.BMP"),("PNG Files", "*.png"),("JPG Files","*.jpg"),("JPEG Files","*.jpeg"),("GIF Files","*.gif")])
+    if not file_path1:
+        print("file not selected")
+    else:
+        img1 = Image.open(file_path1)
+        img1 = img1.resize((200, 200), Image.Resampling.LANCZOS)
+        row = scanner.match_in_db(img1)
+        load_ui(row)

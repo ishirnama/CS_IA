@@ -22,6 +22,11 @@ def back_to_login():
     import main
     main.load_ui()
 
+def edit_details(user):
+    root.destroy()
+    import edit_details
+    edit_details.load_ui(user)
+
 def toggle_metadata(user):
     if user != None:
         if user[13] == 0:
@@ -242,13 +247,27 @@ def load_ui(user_data):
                 relief="raised"
             )
         theme.place(
-            x=508.0,
+            x=498.0,
             y=11.0,
             width=37.825157165527344,
             height=23.4222412109375
         )
 
-    
+    edit_image = PhotoImage(
+        file=relative_to_assets("edit.png"))
+    edit = Button(
+        image=edit_image,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: edit_details(user_data),
+        relief="raised"
+    )
+    edit.place(
+        x=428.0,
+        y=11.0,
+        width=57.825157165527344,
+        height=23.4222412109375
+    )
 
     canvas.create_rectangle(
         478.0,
