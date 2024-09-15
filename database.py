@@ -97,6 +97,9 @@ def update_user(user_record):
 						WHERE username='{user_record[0]}'""" )
 	conn.commit()
 	conn.close()
+	if(len(find_user_records_by_username(user_record[0]))==0):
+		insert_user_record(user_record[0], "consultation","15/12/2024",user_record[0])
+		insert_user_record(user_record[0], "consultation","26/04/202",user_record[0])
 
 # def view():
 # 	conn = sqlite3.connect("sql.db")
