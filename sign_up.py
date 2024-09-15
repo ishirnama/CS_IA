@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 import database
 import io
-import scanner
+from scanner import Scanner
 import re
 
 OUTPUT_PATH = Path(__file__).parent
@@ -51,6 +51,7 @@ def submit_clicked():
     if forename.get() != "" and surname.get() != "" and dob.get != "" and email.get() != "" and username.get() != "" and password.get() != "" and image_data != None and password_checker(password.get())==0:
         
         print("user")
+        scanner = Scanner()
         img1 = Image.open(io.BytesIO(image_data))
         img1 = img1.resize((200, 200), Image.Resampling.LANCZOS)
         if database.find_user_by_username(username.get()) == None and scanner.match_in_db(img1) == None:
@@ -61,7 +62,7 @@ def submit_clicked():
         else:
             messagebox.showinfo("Error", "Invalid user. Either fingerprint or user already exists")
     elif password.get() != "" and password_checker(password.get())!=0:
-        messagebox.showinfo("Error", "Password should be atleast length of 6 with one small, one capital and one number charecter")
+        messagebox.showinfo("Error", "Password should be atleast length of 9 with one small and one number charecter")
     else:
         print("datetime.now(): "+datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         messagebox.showinfo("Error", "All fields are mandatory")
@@ -108,7 +109,7 @@ def generate():
         instring = chr(random.randint(97, 122))
         pwd = f"{pwd}{instring}"
     fpwd = f"{pwd}{instring}{int}"
-    print("rand passwd: "+fpwd)
+    # print("rand passwd: "+fpwd)
     rng_pwd.insert(0, fpwd)
 
 
@@ -132,10 +133,11 @@ def load_ui():
         relief = "ridge"
     )
 
-    submit_img = PhotoImage(
-        file=relative_to_assets("submit.png"))
+    # submit_img = PhotoImage(
+    #     file=relative_to_assets("submit.png"))
     submit = Button(
-        image=submit_img,
+        # image=submit_img,
+        text="Submit",
         borderwidth=0,
         highlightthickness=0,
         command=submit_clicked,
@@ -386,7 +388,7 @@ def load_ui():
         365.0,
         320.0,
         anchor="nw",
-        text="Randomly Generate\n    Password",
+        text="Randomly Generate Password \n(min_length=9 with one\n small char and number)",
         fill="#000000",
         font=("Courier", 14)
     )
@@ -400,10 +402,11 @@ def load_ui():
         outline=""
     )
 
-    button_image_2 = PhotoImage(
-        file=relative_to_assets("button_2.png"))
+    # button_image_2 = PhotoImage(
+    #     file=relative_to_assets("button_2.png"))
     roll = Button(
-        image=button_image_2,
+        # image=button_image_2,
+        text="Generate Password",
         borderwidth=0,
         highlightthickness=0,
         command=generate,
@@ -413,7 +416,7 @@ def load_ui():
     roll.place(
         x=407.0,
         y=441.0,
-        width=93.0,
+        width=133.0,
         height=32.0
     )
 
@@ -430,7 +433,7 @@ def load_ui():
         fg="#000716",
         highlightthickness=0
     )
-    password.config(font=("Courier", 14))
+    password.config(font=("Courier", 14),show="•")
     password.place(
         x=335.0,
         y=177.0,

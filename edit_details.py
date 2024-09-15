@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 import database
 import io
-import scanner
+from scanner import Scanner
 import re
 
 OUTPUT_PATH = Path(__file__).parent
@@ -112,7 +112,7 @@ def generate():
         instring = chr(random.randint(97, 122))
         pwd = f"{pwd}{instring}"
     fpwd = f"{pwd}{instring}{int}"
-    print("rand passwd: "+fpwd)
+    # print("rand passwd: "+fpwd)
     rng_pwd.insert(0, fpwd)
 
 
@@ -136,10 +136,11 @@ def load_ui(user_data):
         relief = "ridge"
     )
 
-    submit_img = PhotoImage(
-        file=relative_to_assets("submit.png"))
+    # submit_img = PhotoImage(
+    #     file=relative_to_assets("submit.png"))
     submit = Button(
-        image=submit_img,
+        # image=submit_img,
+        text="Submit",
         borderwidth=0,
         highlightthickness=0,
         command=lambda: submit_clicked(user_data),
@@ -408,10 +409,11 @@ def load_ui(user_data):
         outline=""
     )
 
-    button_image_2 = PhotoImage(
-        file=relative_to_assets("button_2.png"))
+    # button_image_2 = PhotoImage(
+    #     file=relative_to_assets("button_2.png"))
     roll = Button(
-        image=button_image_2,
+        # image=button_image_2,
+        text="Generate Password",
         borderwidth=0,
         highlightthickness=0,
         command=generate,
@@ -421,7 +423,7 @@ def load_ui(user_data):
     roll.place(
         x=407.0,
         y=441.0,
-        width=93.0,
+        width=133.0,
         height=32.0
     )
 
@@ -438,7 +440,7 @@ def load_ui(user_data):
         fg="#000716",
         highlightthickness=0
     )
-    password.config(font=("Courier", 14))
+    password.config(font=("Courier", 14),show="•")
     password.place(
         x=335.0,
         y=177.0,
@@ -521,5 +523,6 @@ if __name__ == "__main__":
     else:
         img1 = Image.open(file_path1)
         img1 = img1.resize((200, 200), Image.Resampling.LANCZOS)
+        scanner = Scanner()
         row = scanner.match_in_db(img1)
         load_ui(row)

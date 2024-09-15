@@ -11,7 +11,7 @@ from PIL import Image, ImageFilter
 import database
 from tkinter import messagebox
 import io
-import scanner
+from scanner import Scanner 
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"GUI/Login")
@@ -92,6 +92,7 @@ def login():
 def validate_login_biometric(image_data):
     img1 = Image.open(io.BytesIO(image_data))
     img1 = img1.resize((200, 200), Image.Resampling.LANCZOS)
+    scanner = Scanner()
     row = scanner.match_in_db(img1)
     if row != None:
         import menu
@@ -195,7 +196,7 @@ def load_ui():
     )
     password.config(
         font=("Courier",14),
-        show=emoji.emojize(":skull:")
+        show="•"
     )
 
     password.place(

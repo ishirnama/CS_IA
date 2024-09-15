@@ -5,7 +5,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Frame
 from tkinter import filedialog
 import os
 from PIL import Image, ImageTk
-import scanner
+from scanner import Scanner
 import io
 import database
 
@@ -391,7 +391,7 @@ def load_ui(user_data):
                 canvas.delete(image_item)
             image_item = canvas.create_image(424, 200.0, image=tk_image)
         else:
-            
+            scanner = Scanner()
             img1 = Image.fromarray(scanner.blur_image(user_data[7]))
             # img1 = img.resize((200, 200), Image.Resampling.LANCZOS)
             tk_image = ImageTk.PhotoImage(img1)
@@ -502,6 +502,7 @@ if __name__ == "__main__":
     else:
         img1 = Image.open(file_path1)
         img1 = img1.resize((200, 200), Image.Resampling.LANCZOS)
+        scanner = Scanner()
         row = scanner.match_in_db(img1)
         load_ui(row)
             
