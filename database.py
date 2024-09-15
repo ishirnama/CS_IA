@@ -71,7 +71,7 @@ def insert_user_record( org_id, purpose_of_visit, visit_date, username):
 	conn.close()
 
 def insert_user(username, password, email, forename, surname, age=None, is_admin=0, 
-        fingerprint=None, dob=None, pixelsum=0, join_date=None, contour_count=0,org_id=None, hide_metadata=0, hide_userinformation=0, time_of_failed_login=0,failed_login_attempts=0, color_theme="LIGHT"):
+        fingerprint=None, dob=None, pixelsum=0, join_date=None, contour_count=0,org_id=None, hide_metadata=0, hide_userinformation=0, time_of_failed_login=0,failed_login_attempts=0, color_theme="DARK"):
 	if (len(list_tables())==0):
 		create_table(q_create_user_records)
 		create_table(q_create_users_table)
@@ -145,6 +145,16 @@ def update_hide_userinformation_by_username(username, hide_userinformation):
 	conn = sqlite3.connect("sql.db")
 	cur = conn.cursor()
 	cur.execute( f"UPDATE users SET hide_userinformation={hide_userinformation} WHERE username='{username}'" )
+	conn.commit()
+	conn.close()
+
+def update_theme_by_username(username, theme):
+	if (len(list_tables())==0):
+		create_table(q_create_user_records)
+		create_table(q_create_users_table)
+	conn = sqlite3.connect("sql.db")
+	cur = conn.cursor()
+	cur.execute( f"UPDATE users SET color_theme='{theme}' WHERE username='{username}'" )
 	conn.commit()
 	conn.close()
 

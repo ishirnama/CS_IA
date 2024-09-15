@@ -44,12 +44,29 @@ def toggle_userinformation(user):
         print(user[14])
         load_ui(user)
 
+def toggle_theme(user):
+    if user != None:
+        if user[17] == "LIGHT":
+            database.update_theme_by_username(user[0],"DARK")
+        elif user[17] == "DARK":
+            database.update_theme_by_username(user[0],"LIGHT")
+        root.destroy()
+        user = database.find_user_by_username(user[0])
+        print(user[17])
+        load_ui(user)
+
 def load_ui(user_data):
     global image_item, root, user
     img = None
+    text_background_color = "#000000"
+    text_color = "#FFFFFF"
     if user_data != None:
         user = user_data
         img = Image.open(io.BytesIO(user_data[7]))
+        if user_data[17] != None and user_data[17] == "LIGHT":
+            text_background_color = "#FFFFFF"
+            text_color = "#000000"
+
     root = Tk()
     root.title("Bio-Metric Barrier System")
     root.geometry("601x501")
@@ -116,15 +133,15 @@ def load_ui(user_data):
         outline="")
 
     canvas.create_rectangle(
-        18.0,
+        20.0,
         69.0,
         266.0,
         309.0,
-        fill="#000000",
+        fill=text_background_color,
         outline="")
     
     canvas.create_text(
-        18.0,
+        20.0,
         49.0,
         anchor="nw",
         text="User Records",
@@ -136,27 +153,27 @@ def load_ui(user_data):
         count = 0
         for entry in user_records:
             canvas.create_text(
-                18.0,
+                20.0,
                 80.0+count*30,
                 anchor="nw",
                 text=f"record_id: {entry[0]}",
-                fill="#FFFFFF",
+                fill=text_color,
                 font=("Courier", 14)
             )
             canvas.create_text(
-                18.0,
+                20.0,
                 90.0+count*30,
                 anchor="nw",
                 text=f"visit_date: {entry[3]}",
-                fill="#FFFFFF",
+                fill=text_color,
                 font=("Courier", 14)
             )
             canvas.create_text(
-                18.0,
+                20.0,
                 100.0+count*30,
                 anchor="nw",
                 text=f"purpose: {entry[2]}",
-                fill="#FFFFFF",
+                fill=text_color,
                 font=("Courier", 14)
             )
             count = count+1
@@ -210,6 +227,29 @@ def load_ui(user_data):
         height=23.4222412109375
     )
 
+    if user_data != None:
+        if user_data[17] == "LIGHT":
+            theme_image = PhotoImage(
+                file=relative_to_assets("dark_theme.png"))
+        else:
+            theme_image = PhotoImage(
+                file=relative_to_assets("light_theme.png"))
+        theme = Button(
+                image=theme_image,
+                borderwidth=0,
+                highlightthickness=0,
+                command=lambda: toggle_theme(user_data),
+                relief="raised"
+            )
+        theme.place(
+            x=508.0,
+            y=11.0,
+            width=37.825157165527344,
+            height=23.4222412109375
+        )
+
+    
+
     canvas.create_rectangle(
         478.0,
         351.0,
@@ -222,11 +262,11 @@ def load_ui(user_data):
         332.0,
         263.0,
         479.0,
-        fill="#000000",
+        fill=text_background_color,
         outline="")
 
     canvas.create_text(
-        18.0,
+        20.0,
         314.0,
         anchor="nw",
         text="User Details",
@@ -261,59 +301,59 @@ def load_ui(user_data):
             join_date = "0x0x0x0x"
         
     canvas.create_text(
-        18.0,
+        20.0,
         340.0,
         anchor="nw",
         text=f"username: {username}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_text(
-        18.0,
+        20.0,
         360.0,
         anchor="nw",
         text=f"forename: {forename}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_text(
-        18.0,
+        20.0,
         380.0,
         anchor="nw",
         text=f"surname : {surname}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_text(
-        18.0,
+        20.0,
         400.0,
         anchor="nw",
         text=f"age     : {age}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_text(
-        18.0,
+        20.0,
         420.0,
         anchor="nw",
         text=f"dob     : {dob}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_text(
-        18.0,
+        20.0,
         440.0,
         anchor="nw",
         text=f"join_date: {join_date}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_text(
-        18.0,
+        20.0,
         460.0,
         anchor="nw",
         text=f"email: {email}",
-        fill="#FFFFFF",
+        fill=text_color,
         font=("Courier", 14)
     )
     canvas.create_rectangle(
@@ -321,7 +361,7 @@ def load_ui(user_data):
         47.0,
         582.0,
         348.0,
-        fill="#080808",
+        fill=text_background_color,
         outline="")
 
     if user_data != None:
